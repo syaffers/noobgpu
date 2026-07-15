@@ -102,8 +102,8 @@ Repo scaffolding: git init, `server/` (uv, ruff, pytest, FastAPI health route),
 `dev`, `test`, `lint`, `build`. GitHub Actions running lint + tests on both halves.
 
 **Done when:** `make dev` starts backend and frontend with hot reload; CI is green on a
-trivial test in each half. *(Verified locally: proxy `/api` works end-to-end, lint +
-tests + build green. CI workflow's first GitHub run pending — no remote yet.)*
+trivial test in each half. *(Verified: proxy `/api` works end-to-end locally; first
+GitHub Actions run green on both jobs.)*
 
 ### M1 — Runner core (medium)
 No UI. GPU detection via NVML (`pynvml`): name, memory, compute capability, SM count,
