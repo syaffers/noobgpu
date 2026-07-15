@@ -96,13 +96,14 @@ console starts printing the moment nvcc speaks.
 Each milestone is shippable and demoable on its own. "Done when" is the accountability
 line — if it isn't true, the milestone isn't done.
 
-### M0 — Skeleton (small)
-Repo scaffolding: git init, `server/` (uv, ruff, pytest, FastAPI hello route),
-`web/` (Vite + React + TS + Tailwind + ESLint), `challenges/` dir, Makefile/justfile
-for `dev`, `test`, `build`. GitHub Actions running lint + tests on both halves.
+### M0 — Skeleton (small) — ✅ done 2026-07-16
+Repo scaffolding: git init, `server/` (uv, ruff, pytest, FastAPI health route),
+`web/` (Vite + React + TS + Tailwind + oxlint), `challenges/` dir, Makefile for
+`dev`, `test`, `lint`, `build`. GitHub Actions running lint + tests on both halves.
 
-**Done when:** `just dev` starts backend and frontend with hot reload; CI is green on a
-trivial test in each half.
+**Done when:** `make dev` starts backend and frontend with hot reload; CI is green on a
+trivial test in each half. *(Verified locally: proxy `/api` works end-to-end, lint +
+tests + build green. CI workflow's first GitHub run pending — no remote yet.)*
 
 ### M1 — Runner core (medium)
 No UI. GPU detection via NVML (`pynvml`): name, memory, compute capability, SM count,
