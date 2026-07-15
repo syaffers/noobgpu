@@ -105,16 +105,19 @@ Repo scaffolding: git init, `server/` (uv, ruff, pytest, FastAPI health route),
 trivial test in each half. *(Verified: proxy `/api` works end-to-end locally; first
 GitHub Actions run green on both jobs.)*
 
-### M1 — Runner core (medium)
-No UI. GPU detection via NVML (`pynvml`): name, memory, compute capability, SM count,
-driver version. `SubprocessRunner`: temp workdir, `setrlimit` (CPU, address space, file
-size), wall-clock timeout with process-tree kill. Compile step (`nvcc` invocation with
-captured diagnostics) and execute step. Structured `RunResult`. A throwaway CLI
-(`python -m noobgpu.judge <file.cu>`) for exercising it.
+### M1 — Runner core (medium) — ✅ done 2026-07-16
+No UI. GPU detection via NVML (`nvidia-ml-py`): name, memory, compute capability,
+driver version (SM count isn't exposed by NVML — deferred to the M4 spec modal via a
+different source). `SubprocessRunner`: temp workdir, `setrlimit` (CPU, file size),
+wall-clock timeout with process-tree kill. No address-space cap — the CUDA runtime
+reserves huge virtual ranges, so `RLIMIT_AS` breaks every GPU binary. Compile step
+(`nvcc -arch=native` with captured diagnostics) and execute step. Structured
+`RunResult`. A throwaway CLI (`python -m noobgpu.judge <file.cu>`) for exercising it.
 
 **Done when:** the CLI compiles and runs a vector-add `.cu` file on the real GPU and
 prints a structured result; an infinite-loop kernel is killed at the timeout; a missing
-GPU or missing `nvcc` produces a distinct, typed error.
+GPU or missing `nvcc` produces a distinct, typed error. *(Verified on RTX 5050: 12
+tests pass — 4 GPU-marked e2e, auto-skipped where no GPU, so CI stays honest.)*
 
 ### M2 — Challenges + judge (medium)
 Challenge pack format and loader (with schema validation and good error messages for

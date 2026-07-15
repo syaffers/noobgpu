@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 license = "MIT"
 dependencies = [
     "fastapi>=0.115",
+    "nvidia-ml-py>=13.610.43",
     "uvicorn[standard]>=0.30",
 ]
 
@@ -33,3 +34,6 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "gpu: requires an NVIDIA GPU and the CUDA toolkit (skipped automatically when absent)",
+]
