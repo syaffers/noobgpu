@@ -135,15 +135,19 @@ deliberately wrong one gets Wrong Answer, verified by pytest running the real ju
 end-to-end on the GPU. *(Verified on RTX 5050: 38 tests pass, covering all five
 verdicts, sample-only runs, and cache reuse.)*
 
-### M3 — API layer (small)
+### M3 — API layer (small) — ✅ done 2026-07-16
 FastAPI routes: `GET /api/challenges`, `GET /api/challenges/{id}`, `POST .../run`
 (sample tests, SSE stream of compile output + per-test events), `POST .../submit`
-(hidden tests, SSE, persists result), `GET .../submissions`, `GET /api/gpu`,
-draft save/load endpoints. SQLite via a thin layer (SQLModel or raw `sqlite3` — decide
-in-milestone, whichever reads better). OpenAPI docs come free from FastAPI.
+(all tests, SSE, persists result), `GET .../submissions`, `GET /api/submissions/{id}`,
+`GET /api/gpu`, draft save/load endpoints. SQLite via raw `sqlite3` (open question 3
+resolved — see `store.py`). The judge emits progress events through an `on_event`
+callback; the API bridges them to SSE via a worker thread + queue. `create_app()`
+factory keeps tests hermetic; config via `NOOBGPU_CHALLENGES_DIR` / `NOOBGPU_DB`.
 
 **Done when:** the full challenge lifecycle works from `curl`/httpie alone, including
-watching an SSE stream during a run; submissions survive a server restart.
+watching an SSE stream during a run; submissions survive a server restart. *(Verified
+with curl end-to-end: live SSE stream on submit, submission listed after a fresh server
+process on the same DB. 49 tests pass.)*
 
 ### M4 — Workspace UI (large)
 The core screen, mirroring the LeetGPU workspace layout: header (logo, GPU badge, Run,
@@ -193,7 +197,10 @@ CUDA-simulator integration for GPU-less machines.
    `kernel_ms` is the max across tests (the largest test dominates).
 2. ~~**Resource limits per challenge**~~ — decided in M2: judge defaults with optional
    `[limits]` overrides (`wall_time_s`, `cpu_time_s`) in `challenge.toml`.
-3. **SQLModel vs raw sqlite3** — decide in M3 by writing the submissions table both ways
-   and keeping the more readable one.
+3. ~~**SQLModel vs raw sqlite3**~~ — decided in M3: raw `sqlite3`. Two small tables
+   don't justify a SQLAlchemy dependency; the whole schema is one visible string in
+   `store.py`, and per-operation connections give thread safety without locks.
+   (Deviation note: decided by inspection rather than writing both versions — the
+   comparison was lopsided enough not to warrant the exercise.)
 4. **Frontend state** — plain React Query + context vs a store like Zustand; decide in
    M4 once the workspace's real state shape exists.

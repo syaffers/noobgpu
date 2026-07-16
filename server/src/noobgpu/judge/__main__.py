@@ -12,30 +12,16 @@ Prints a structured JSON result to stdout. Exit codes: 0 success/accepted,
 
 import argparse
 import json
-import os
 import shutil
 import sys
 import tempfile
 from pathlib import Path
 
-from noobgpu.challenges import load_challenge
+from noobgpu.challenges import find_challenges_root, load_challenge
 from noobgpu.errors import NoobGpuError
 from noobgpu.gpu import detect_gpu
 from noobgpu.judge import Verdict, compile_cuda, judge_submission, run_binary
 from noobgpu.runner import Limits, SubprocessRunner
-
-
-def default_challenges_root() -> Path:
-    env = os.environ.get("NOOBGPU_CHALLENGES_DIR")
-    if env:
-        return Path(env)
-    for base in (Path.cwd(), *Path.cwd().parents):
-        candidate = base / "challenges"
-        if candidate.is_dir():
-            return candidate
-    raise NoobGpuError(
-        "no challenges directory found — pass --challenges-dir or set NOOBGPU_CHALLENGES_DIR"
-    )
 
 
 def cmd_run(args: argparse.Namespace) -> int:
@@ -62,7 +48,7 @@ def cmd_run(args: argparse.Namespace) -> int:
 
 def cmd_submit(args: argparse.Namespace) -> int:
     gpu = detect_gpu()
-    root = args.challenges_dir or default_challenges_root()
+    root = args.challenges_dir or find_challenges_root()
     challenge = load_challenge(root / args.challenge_id)
     judged = judge_submission(
         challenge,

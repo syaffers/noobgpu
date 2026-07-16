@@ -2,6 +2,7 @@ import hashlib
 import json
 import shutil
 import tempfile
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import StrEnum
 from pathlib import Path
@@ -153,16 +154,33 @@ def _parse_report(stdout: str) -> dict | None:
     return None
 
 
+OnEvent = Callable[[dict], None]
+
+
 def judge_submission(
     challenge: Challenge,
     solution_code: str,
     root: Path,
     runner: Runner,
     sample_only: bool = False,
+    on_event: OnEvent | None = None,
 ) -> JudgeResult:
     """Compile solution_code against the challenge harness and run its tests
-    in order, stopping at the first failure."""
+    in order, stopping at the first failure. on_event (if given) receives
+    JSON-serializable progress events as each stage completes."""
+
+    def emit(event: dict) -> None:
+        if on_event is not None:
+            on_event(event)
+
+    cached = all(
+        _expected_path(challenge, root, case).is_file() for case in challenge.tests
+    )
+    if not cached:
+        emit({"type": "prepare_start"})
     expected = ensure_expected_outputs(challenge, root, runner)
+    if not cached:
+        emit({"type": "prepare_end"})
     cases = challenge.sample_tests() if sample_only else challenge.tests
 
     with tempfile.TemporaryDirectory(prefix="noobgpu-judge-") as tmp:
@@ -171,17 +189,27 @@ def judge_submission(
         solution.write_text(solution_code)
         binary = workdir / "program"
 
+        emit({"type": "compile_start"})
         compiled = compile_cuda(
             [challenge.harness_path, solution],
             binary,
             runner,
             include_dir=common_include_dir(root),
         )
+        emit(
+            {
+                "type": "compile_end",
+                "ok": compiled.ok,
+                "stderr": compiled.stderr,
+                "duration_s": round(compiled.duration_s, 4),
+            }
+        )
         if not compiled.ok:
             return JudgeResult(verdict=Verdict.COMPILE_ERROR, compile_result=compiled)
 
         outcomes: list[TestOutcome] = []
         for case in cases:
+            emit({"type": "test_start", "name": case.name, "sample": case.sample})
             cmd = [str(binary), "check", str(expected[case.name]), str(challenge.tolerance)]
             cmd += [str(a) for a in case.args]
             run = runner.run(cmd, workdir=workdir, limits=challenge.limits)
@@ -196,16 +224,16 @@ def judge_submission(
             else:
                 verdict = Verdict.ACCEPTED
 
-            outcomes.append(
-                TestOutcome(
-                    name=case.name,
-                    sample=case.sample,
-                    passed=verdict == Verdict.ACCEPTED,
-                    max_abs_err=report.get("max_abs_err") if report else None,
-                    kernel_ms=report.get("kernel_ms") if report else None,
-                    run=run,
-                )
+            outcome = TestOutcome(
+                name=case.name,
+                sample=case.sample,
+                passed=verdict == Verdict.ACCEPTED,
+                max_abs_err=report.get("max_abs_err") if report else None,
+                kernel_ms=report.get("kernel_ms") if report else None,
+                run=run,
             )
+            outcomes.append(outcome)
+            emit({"type": "test_end", **outcome.to_dict(), "stderr": run.stderr})
             if verdict != Verdict.ACCEPTED:
                 return JudgeResult(
                     verdict=verdict,

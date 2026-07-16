@@ -1,3 +1,4 @@
+import os
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -54,6 +55,14 @@ class Challenge:
 
     def sample_tests(self) -> tuple[TestCase, ...]:
         return tuple(t for t in self.tests if t.sample)
+
+    def blurb(self) -> str:
+        """First prose line of the description, for challenge cards."""
+        for line in self.description_path.read_text().splitlines():
+            stripped = line.strip()
+            if stripped and not stripped.startswith("#"):
+                return stripped
+        return ""
 
 
 def _fail(pack: Path, problem: str) -> ChallengePackError:
@@ -133,3 +142,16 @@ def load_challenges(root: Path) -> list[Challenge]:
 
 def common_include_dir(root: Path) -> Path:
     return root / COMMON_DIR
+
+
+def find_challenges_root() -> Path:
+    """NOOBGPU_CHALLENGES_DIR, or the nearest 'challenges' directory upward from cwd."""
+    if env := os.environ.get("NOOBGPU_CHALLENGES_DIR"):
+        return Path(env)
+    for base in (Path.cwd(), *Path.cwd().parents):
+        candidate = base / "challenges"
+        if candidate.is_dir():
+            return candidate
+    raise NoobGpuError(
+        "no challenges directory found — set NOOBGPU_CHALLENGES_DIR or run from the repo"
+    )
