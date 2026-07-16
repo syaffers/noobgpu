@@ -1,0 +1,21 @@
+id = "reverse-array"
+title = "Reverse Array"
+difficulty = "easy"
+tolerance = 0.0
+
+[[tests]]
+name = "sample-16"
+sample = true
+args = [16, 1]
+
+[[tests]]
+name = "odd-4097"
+args = [4097, 2]
+
+[[tests]]
+name = "single-1"
+args = [1, 3]
+
+[[tests]]
+name = "large-1m"
+args = [1048576, 4]

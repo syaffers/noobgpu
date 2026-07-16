@@ -1,0 +1,24 @@
+id = "vector-addition"
+title = "Vector Addition"
+difficulty = "easy"
+tolerance = 1e-5
+
+[limits]
+wall_time_s = 5.0
+
+[[tests]]
+name = "sample-16"
+sample = true
+args = [16, 1]
+
+[[tests]]
+name = "small-1k"
+args = [1024, 2]
+
+[[tests]]
+name = "odd-65537"
+args = [65537, 3]
+
+[[tests]]
+name = "large-1m"
+args = [1048576, 4]

@@ -1,0 +1,21 @@
+id = "relu"
+title = "ReLU"
+difficulty = "easy"
+tolerance = 0.0
+
+[[tests]]
+name = "sample-16"
+sample = true
+args = [16, 1]
+
+[[tests]]
+name = "small-1k"
+args = [1024, 2]
+
+[[tests]]
+name = "odd-99999"
+args = [99999, 3]
+
+[[tests]]
+name = "large-1m"
+args = [1048576, 4]

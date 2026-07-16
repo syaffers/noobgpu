@@ -119,16 +119,21 @@ prints a structured result; an infinite-loop kernel is killed at the timeout; a 
 GPU or missing `nvcc` produces a distinct, typed error. *(Verified on RTX 5050: 12
 tests pass — 4 GPU-marked e2e, auto-skipped where no GPU, so CI stays honest.)*
 
-### M2 — Challenges + judge (medium)
+### M2 — Challenges + judge (medium) — ✅ done 2026-07-16
 Challenge pack format and loader (with schema validation and good error messages for
 malformed packs). Harness convention (`solve()` entry point, JSON-per-test output,
-CUDA-event timing). Judge: compile once, run per test, compare with per-challenge float
-tolerance, aggregate verdict. **Five seed challenges**: Vector Addition, Matrix
-Transpose, ReLU, Reverse Array, Matrix Multiplication.
+CUDA-event timing), documented in `challenges/README.md`; shared helpers live in
+`challenges/_common/noobgpu_harness.h`. Judge: compile once, run per test, compare with
+per-challenge float tolerance, aggregate verdict (Accepted / Wrong Answer / Compile
+Error / Runtime Error / Time Limit Exceeded), stop at first failure. Expected outputs
+are generated lazily from `reference.cu` into a content-addressed `.cache/`. **Five
+seed challenges**: Vector Addition, Matrix Transpose, ReLU, Reverse Array, Matrix
+Multiplication.
 
 **Done when:** for every seed challenge, a known-good solution gets Accepted and a
 deliberately wrong one gets Wrong Answer, verified by pytest running the real judge
-end-to-end on the GPU.
+end-to-end on the GPU. *(Verified on RTX 5050: 38 tests pass, covering all five
+verdicts, sample-only runs, and cache reuse.)*
 
 ### M3 — API layer (small)
 FastAPI routes: `GET /api/challenges`, `GET /api/challenges/{id}`, `POST .../run`
@@ -183,10 +188,11 @@ CUDA-simulator integration for GPU-less machines.
 
 ## Open questions (fine to defer, listed for accountability)
 
-1. **Kernel timing semantics** — time only the `solve()` call via CUDA events (fair,
-   excludes H2D/D2H copies the harness performs)? Proposed: yes; decide in M2.
-2. **Resource limits per challenge** — global defaults with per-challenge overrides in
-   `challenge.toml`? Proposed: yes; decide in M2.
+1. ~~**Kernel timing semantics**~~ — decided in M2: CUDA events around the `solve()`
+   call only; harness H2D/D2H copies are excluded. Reported per test; the summary
+   `kernel_ms` is the max across tests (the largest test dominates).
+2. ~~**Resource limits per challenge**~~ — decided in M2: judge defaults with optional
+   `[limits]` overrides (`wall_time_s`, `cpu_time_s`) in `challenge.toml`.
 3. **SQLModel vs raw sqlite3** — decide in M3 by writing the submissions table both ways
    and keeping the more readable one.
 4. **Frontend state** — plain React Query + context vs a store like Zustand; decide in

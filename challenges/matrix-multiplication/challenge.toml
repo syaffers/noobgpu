@@ -1,0 +1,24 @@
+id = "matrix-multiplication"
+title = "Matrix Multiplication"
+difficulty = "medium"
+tolerance = 1e-3
+
+[limits]
+wall_time_s = 10.0
+
+[[tests]]
+name = "sample-2x2x2"
+sample = true
+args = [2, 2, 2, 1]
+
+[[tests]]
+name = "small-64"
+args = [64, 64, 64, 2]
+
+[[tests]]
+name = "odd-129x65x257"
+args = [129, 65, 257, 3]
+
+[[tests]]
+name = "large-512"
+args = [512, 512, 512, 4]

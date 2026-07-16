@@ -1,0 +1,21 @@
+id = "matrix-transpose"
+title = "Matrix Transpose"
+difficulty = "easy"
+tolerance = 0.0
+
+[[tests]]
+name = "sample-4x4"
+sample = true
+args = [4, 4, 1]
+
+[[tests]]
+name = "wide-8x1024"
+args = [8, 1024, 2]
+
+[[tests]]
+name = "tall-1000x3"
+args = [1000, 3, 3]
+
+[[tests]]
+name = "square-1024"
+args = [1024, 1024, 4]
