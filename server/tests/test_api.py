@@ -52,7 +52,7 @@ def test_unknown_challenge_is_404(client: TestClient):
 
 
 def test_draft_roundtrip(client: TestClient):
-    assert client.get("/api/challenges/relu/draft").status_code == 404
+    assert client.get("/api/challenges/relu/draft").json() == {"code": None}
     assert client.put(
         "/api/challenges/relu/draft", json={"code": "// my work"}
     ).status_code == 204

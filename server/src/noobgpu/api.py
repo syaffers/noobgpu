@@ -171,8 +171,7 @@ def save_draft(challenge_id: str, body: CodeBody, request: Request) -> None:
 
 @router.get("/challenges/{challenge_id}/draft")
 def get_draft(challenge_id: str, request: Request) -> dict:
+    """code is null when no draft is saved — not a 404, so fresh challenge
+    loads don't spray expected errors into the browser console."""
     _challenge_or_404(_root(request), challenge_id)
-    code = _store(request).get_draft(challenge_id)
-    if code is None:
-        raise HTTPException(status_code=404, detail="no draft saved")
-    return {"code": code}
+    return {"code": _store(request).get_draft(challenge_id)}

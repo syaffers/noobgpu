@@ -149,16 +149,20 @@ watching an SSE stream during a run; submissions survive a server restart. *(Ver
 with curl end-to-end: live SSE stream on submit, submission listed after a fresh server
 process on the same DB. 49 tests pass.)*
 
-### M4 — Workspace UI (large)
+### M4 — Workspace UI (large) — ✅ done 2026-07-16
 The core screen, mirroring the LeetGPU workspace layout: header (logo, GPU badge, Run,
-Submit), left panel rendering `description.md` (markdown + math), right panel Monaco with
-CUDA syntax + starter code + Reset button, bottom console streaming SSE output with
+Submit, temporary challenge dropdown until M5's list page), left panel rendering
+`description.md` (markdown via react-markdown + remark-gfm; math deferred until a
+challenge needs it), right panel Monaco (bundled locally, no CDN — offline-first) with
+C++ syntax + starter code + Reset button, bottom console streaming SSE output with
 compile errors and verdicts styled distinctly. GPU spec modal fed by `/api/gpu`. Draft
-autosave. Keyboard shortcut for Run.
+autosave (debounced, forced before run/submit). Ctrl/Cmd+Enter runs.
 
 **Done when:** you can solve Vector Addition start-to-finish in the browser — see the
 problem, edit code, watch a failing run stream in, fix it, submit, get Accepted with a
-kernel time — without touching a terminal.
+kernel time — without touching a terminal. *(Verified in headless Chromium: starter →
+Wrong Answer, fixed in-editor → Accepted with kernel time, draft survives reload, GPU
+modal renders, zero console errors.)*
 
 ### M5 — Browser + submissions UI (medium)
 Challenge list page (cards, search, difficulty filter), routing between list and
@@ -202,5 +206,7 @@ CUDA-simulator integration for GPU-less machines.
    `store.py`, and per-operation connections give thread safety without locks.
    (Deviation note: decided by inspection rather than writing both versions — the
    comparison was lopsided enough not to warrant the exercise.)
-4. **Frontend state** — plain React Query + context vs a store like Zustand; decide in
-   M4 once the workspace's real state shape exists.
+4. ~~**Frontend state**~~ — decided in M4: plain React hooks, no state library. The
+   workspace's real state is one challenge, one code string, one event list, and a few
+   booleans — a store would be ceremony. Revisit only if M5 routing shows real
+   prop-drilling pain.
