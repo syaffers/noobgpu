@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 from noobgpu.challenges import Challenge, ChallengePackError, load_challenge, load_challenges
 from noobgpu.errors import GpuNotAvailableError
-from noobgpu.gpu import detect_gpu
+from noobgpu.gpu import detect_gpu, gpu_spec_sheet
 from noobgpu.judge import judge_submission
 from noobgpu.runner import SubprocessRunner
 from noobgpu.store import Store
@@ -60,7 +60,12 @@ def _nvcc_status() -> dict:
 def gpu_info() -> dict:
     nvcc = _nvcc_status()
     try:
-        return {"available": True, **detect_gpu().to_dict(), "nvcc": nvcc}
+        return {
+            "available": True,
+            **detect_gpu().to_dict(),
+            "nvcc": nvcc,
+            "specs": gpu_spec_sheet(),
+        }
     except GpuNotAvailableError as exc:
         return {"available": False, "error": str(exc), "nvcc": nvcc}
 

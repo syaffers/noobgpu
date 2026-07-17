@@ -1,5 +1,7 @@
 export type NvccStatus = { available: boolean; version: string | null }
 
+export type SpecSection = { title: string; rows: [string, string][] }
+
 export type GpuInfo =
   | {
       available: true
@@ -8,6 +10,7 @@ export type GpuInfo =
       memory_total_mib: number
       compute_capability: string
       nvcc: NvccStatus
+      specs: SpecSection[]
     }
   | { available: false; error: string; nvcc: NvccStatus }
 
