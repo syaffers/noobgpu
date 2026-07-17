@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router'
 import ServerDown from './components/ServerDown'
 import ChallengeList from './pages/ChallengeList'
+import Guide from './pages/Guide'
 import Workspace from './pages/Workspace'
 import * as api from './lib/api'
 import type { ChallengeSummary, GpuInfo } from './lib/types'
@@ -35,6 +36,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<ChallengeList challenges={challenges} gpu={gpu} />} />
       <Route path="/challenges/:id" element={<Workspace gpu={gpu} />} />
+      <Route path="/guide" element={<Guide gpu={gpu} />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

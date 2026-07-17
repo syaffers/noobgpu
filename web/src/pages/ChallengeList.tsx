@@ -31,7 +31,10 @@ export default function ChallengeList({ challenges, gpu }: Props) {
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
       <header className="flex items-center gap-4 border-b border-neutral-800 px-6 py-3">
         <h1 className="text-xl font-bold tracking-tight text-teal-300">NoobGPU</h1>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-4">
+          <Link to="/guide" className="text-sm text-neutral-400 hover:text-neutral-200">
+            Guide
+          </Link>
           <GpuBadge gpu={gpu} />
         </div>
       </header>

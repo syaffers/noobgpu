@@ -114,6 +114,9 @@ export default function Workspace({ gpu }: { gpu: GpuInfo | null }) {
         </Link>
         <span className="text-sm text-neutral-400">{challenge?.title ?? '…'}</span>
         <div className="ml-auto flex items-center gap-4">
+          <Link to="/guide" className="text-sm text-neutral-400 hover:text-neutral-200">
+            Guide
+          </Link>
           <GpuBadge gpu={gpu} />
           <button
             onClick={() => judge('run')}
