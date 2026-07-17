@@ -42,6 +42,25 @@ noobgpu                       # starts the server — open the printed URL in yo
 `noobgpu` serves everything from one process — UI, API, judge — and works from any
 directory. Flags: `--port`, `--host`.
 
+## Using a remote GPU box
+
+Running NoobGPU on a cloud GPU instance (say, a T4 on AWS)? Don't expose it to the
+internet — it has no authentication and it exists to compile and run submitted code.
+Keep the default `127.0.0.1` binding on the remote machine and tunnel to it with SSH
+port forwarding:
+
+```bash
+ssh -L 8000:localhost:8000 user@your-gpu-box   # from your laptop
+# on the remote box:
+noobgpu
+# then browse http://localhost:8000 on your laptop
+```
+
+`--host 0.0.0.0` is for networks you trust (e.g., reaching your desktop's GPU from
+another machine at home); the CLI prints both the local and network URLs when you use
+it. Note that on cloud instances the printed network address is the *private* one —
+one more reason the SSH tunnel is the right tool there.
+
 ## Development
 
 ```bash

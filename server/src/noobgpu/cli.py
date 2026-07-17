@@ -59,6 +59,11 @@ def main() -> None:
         print(f"  Local:   http://127.0.0.1:{args.port}")
         if ip := lan_ip():
             print(f"  Network: http://{ip}:{args.port}")
+        print(
+            "\n  Caution: NoobGPU has no authentication and runs submitted code.\n"
+            "  Only bind all interfaces on networks you trust; for remote GPU\n"
+            "  boxes prefer SSH port forwarding (see README)."
+        )
     else:
         print(f"  Serving at http://{args.host}:{args.port}")
     print("  Press Ctrl+C to stop.\n")
