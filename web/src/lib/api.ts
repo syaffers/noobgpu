@@ -1,4 +1,11 @@
-import type { ChallengeDetail, ChallengeSummary, GpuInfo, JudgeEvent } from './types'
+import type {
+  ChallengeDetail,
+  ChallengeSummary,
+  GpuInfo,
+  JudgeEvent,
+  SubmissionDetail,
+  SubmissionSummary,
+} from './types'
 
 async function getJson<T>(url: string): Promise<T> {
   const res = await fetch(url)
@@ -9,6 +16,10 @@ async function getJson<T>(url: string): Promise<T> {
 export const fetchGpu = () => getJson<GpuInfo>('/api/gpu')
 export const fetchChallenges = () => getJson<ChallengeSummary[]>('/api/challenges')
 export const fetchChallenge = (id: string) => getJson<ChallengeDetail>(`/api/challenges/${id}`)
+export const fetchSubmissions = (id: string) =>
+  getJson<SubmissionSummary[]>(`/api/challenges/${id}/submissions`)
+export const fetchSubmission = (id: number) =>
+  getJson<SubmissionDetail>(`/api/submissions/${id}`)
 
 export async function fetchDraft(id: string): Promise<string | null> {
   const res = await fetch(`/api/challenges/${id}/draft`)

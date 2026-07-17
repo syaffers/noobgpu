@@ -1,3 +1,5 @@
+export type NvccStatus = { available: boolean; version: string | null }
+
 export type GpuInfo =
   | {
       available: true
@@ -5,8 +7,9 @@ export type GpuInfo =
       driver_version: string
       memory_total_mib: number
       compute_capability: string
+      nvcc: NvccStatus
     }
-  | { available: false; error: string }
+  | { available: false; error: string; nvcc: NvccStatus }
 
 export type ChallengeSummary = {
   id: string
@@ -31,6 +34,21 @@ export type Verdict =
   | 'compile_error'
   | 'runtime_error'
   | 'time_limit_exceeded'
+
+export type SubmissionSummary = {
+  id: number
+  challenge_id: string
+  verdict: Verdict
+  kernel_ms: number | null
+  failed_test: string | null
+  created_at: string
+}
+
+export type SubmissionDetail = SubmissionSummary & {
+  code: string
+  compile_stderr: string
+  tests: { name: string; sample: boolean; passed: boolean; kernel_ms: number | null }[]
+}
 
 export type JudgeEvent =
   | { type: 'prepare_start' }

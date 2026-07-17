@@ -1,5 +1,8 @@
 import json
 import queue
+import re
+import shutil
+import subprocess
 import threading
 from pathlib import Path
 
@@ -39,12 +42,27 @@ def _challenge_or_404(root: Path, challenge_id: str) -> Challenge:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
+def _nvcc_status() -> dict:
+    nvcc = shutil.which("nvcc")
+    if nvcc is None:
+        return {"available": False, "version": None}
+    try:
+        out = subprocess.run(
+            [nvcc, "--version"], capture_output=True, text=True, timeout=10
+        ).stdout
+        match = re.search(r"release (\S+?),", out)
+        return {"available": True, "version": match.group(1) if match else None}
+    except (OSError, subprocess.TimeoutExpired):
+        return {"available": False, "version": None}
+
+
 @router.get("/gpu")
 def gpu_info() -> dict:
+    nvcc = _nvcc_status()
     try:
-        return {"available": True, **detect_gpu().to_dict()}
+        return {"available": True, **detect_gpu().to_dict(), "nvcc": nvcc}
     except GpuNotAvailableError as exc:
-        return {"available": False, "error": str(exc)}
+        return {"available": False, "error": str(exc), "nvcc": nvcc}
 
 
 @router.get("/challenges")

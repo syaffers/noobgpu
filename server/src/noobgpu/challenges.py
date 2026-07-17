@@ -57,11 +57,12 @@ class Challenge:
         return tuple(t for t in self.tests if t.sample)
 
     def blurb(self) -> str:
-        """First prose line of the description, for challenge cards."""
+        """First prose line of the description, for challenge cards.
+        Inline markdown markers are stripped — cards render plain text."""
         for line in self.description_path.read_text().splitlines():
             stripped = line.strip()
             if stripped and not stripped.startswith("#"):
-                return stripped
+                return stripped.replace("`", "").replace("**", "")
         return ""
 
 

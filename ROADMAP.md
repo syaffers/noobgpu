@@ -164,15 +164,18 @@ kernel time — without touching a terminal. *(Verified in headless Chromium: st
 Wrong Answer, fixed in-editor → Accepted with kernel time, draft survives reload, GPU
 modal renders, zero console errors.)*
 
-### M5 — Browser + submissions UI (medium)
-Challenge list page (cards, search, difficulty filter), routing between list and
-workspace, Submissions tab in the workspace (verdict history, click to view/restore that
-code). Empty/error states: no GPU detected, `nvcc` missing, server unreachable — each
-with a screen that says what to do about it.
+### M5 — Browser + submissions UI (medium) — ✅ done 2026-07-17
+Challenge list page (cards, search, difficulty filter), react-router routing between
+list and workspace, Submissions tab in the workspace (verdict history, click to
+view/restore that code). `/api/gpu` gained `nvcc` status so the UI distinguishes the
+failure causes. Error states: no GPU detected and `nvcc` missing render a guidance
+banner with Run/Submit disabled; server unreachable renders a full retry screen.
 
 **Done when:** the full LeetGPU-style flow (browse → filter → open → solve → review past
 submissions → restore old code) works, and pulling the GPU/toolkit out from under the app
-shows guidance instead of a broken page.
+shows guidance instead of a broken page. *(Verified in headless Chromium: whole flow
+end-to-end; nvcc state tested against a real stripped-PATH server; no-GPU state via a
+stubbed /api/gpu response — a driverless environment can't be produced on this machine.)*
 
 ### M6 — Release v0.1.0 (medium)
 Grow to **10 challenges** (add: Matrix Addition, Leaky ReLU, 1D Convolution, Color

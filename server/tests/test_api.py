@@ -26,6 +26,9 @@ def test_gpu_endpoint_shape(client: TestClient):
         assert body["name"]
     else:
         assert body["error"]
+    assert "available" in body["nvcc"]
+    if body["nvcc"]["available"]:
+        assert body["nvcc"]["version"]
 
 
 def test_challenge_list(client: TestClient):
