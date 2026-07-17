@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Onboarding guide page (`/guide`) with a line-by-line first-kernel walkthrough;
+  easy-challenge starters rewritten with teaching comments.
+- `noobgpu` prints a startup banner and the serving URL instead of auto-opening
+  a browser (auto-open fell back to console browsers like lynx in sessions
+  without a graphical display). The `--no-browser` flag is gone accordingly.
+
 ## 0.1.0 — 2026-07-17
 
 First release.

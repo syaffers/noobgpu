@@ -36,11 +36,11 @@ git clone https://github.com/syaffers/noobgpu.git
 cd noobgpu
 make build                    # builds the frontend + a wheel with everything bundled
 uv tool install ./server/dist/noobgpu-0.1.0-py3-none-any.whl
-noobgpu                       # starts the server and opens your browser
+noobgpu                       # starts the server — open the printed URL in your browser
 ```
 
 `noobgpu` serves everything from one process — UI, API, judge — and works from any
-directory. Flags: `--port`, `--host`, `--no-browser`.
+directory. Flags: `--port`, `--host`.
 
 ## Development
 

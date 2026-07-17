@@ -16,8 +16,9 @@ NVIDIA GPU is present, NoobGPU detects it and uses it as the runtime for submitt
 
 ## Product definition
 
-One sentence: *open a terminal, run `noobgpu`, a browser tab opens with a LeetGPU-style
-challenge workspace, and Run/Submit executes CUDA on your GPU in under a second of overhead.*
+One sentence: *open a terminal, run `noobgpu`, open the printed URL in a browser to get
+a LeetGPU-style challenge workspace, and Run/Submit executes CUDA on your GPU in under a
+second of overhead.*
 
 The differentiator vs LeetGPU is the inverse of their pitch: they remove the hardware
 barrier via CPU emulation, so their timings are architectural estimates. NoobGPU assumes
@@ -183,7 +184,7 @@ Matrix Addition, Leaky ReLU, 1D Convolution, Color Inversion, Reduction/Sum — 
 the post-1.0 backlog.)* Packaging: `make build` bundles the built frontend and the
 challenge packs into the wheel; the `noobgpu` command serves UI + API + judge from one
 process (SPA fallback, packaged-challenges fallback, expected-output cache redirected
-to `~/.cache/noobgpu`) and opens the browser. README with a screenshot-led quickstart,
+to `~/.cache/noobgpu`) and prints the serving URL. README with a screenshot-led quickstart,
 CONTRIBUTING with a "write a challenge pack" guide, LICENSE (MIT for code; challenges
 CC BY 4.0 so others *can* reuse ours), CHANGELOG, tagged v0.1.0.
 
