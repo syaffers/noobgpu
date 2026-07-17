@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import socket
 from pathlib import Path
 
 import uvicorn
@@ -30,6 +31,16 @@ def display_host(host: str) -> str:
     return "127.0.0.1" if host in ("0.0.0.0", "::") else host
 
 
+def lan_ip() -> str | None:
+    """This machine's LAN address (no traffic is actually sent)."""
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("10.255.255.255", 1))
+            return s.getsockname()[0]
+    except OSError:
+        return None
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="noobgpu", description="Local-first CUDA challenge playground"
@@ -42,15 +53,14 @@ def main() -> None:
     os.environ.setdefault("NOOBGPU_CACHE_DIR", str(_default_cache_dir()))
 
     app = create_app()
-    url = f"http://{display_host(args.host)}:{args.port}"
 
     print(BANNER)
-    print(f"  Serving at {url}")
     if args.host in ("0.0.0.0", "::"):
-        print(
-            "  Listening on all interfaces — also reachable via this"
-            f" machine's network address, port {args.port}."
-        )
+        print(f"  Local:   http://127.0.0.1:{args.port}")
+        if ip := lan_ip():
+            print(f"  Network: http://{ip}:{args.port}")
+    else:
+        print(f"  Serving at http://{args.host}:{args.port}")
     print("  Press Ctrl+C to stop.\n")
 
     uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
