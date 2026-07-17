@@ -51,6 +51,10 @@ class Challenge:
 
     @property
     def cache_dir(self) -> Path:
+        """Expected-output cache. NOOBGPU_CACHE_DIR redirects it (the packaged
+        install sets this so site-packages stays pristine)."""
+        if base := os.environ.get("NOOBGPU_CACHE_DIR"):
+            return Path(base) / self.id
         return self.dir / ".cache"
 
     def sample_tests(self) -> tuple[TestCase, ...]:
@@ -145,14 +149,20 @@ def common_include_dir(root: Path) -> Path:
     return root / COMMON_DIR
 
 
+PACKAGED_CHALLENGES = Path(__file__).parent / "data" / "challenges"
+
+
 def find_challenges_root() -> Path:
-    """NOOBGPU_CHALLENGES_DIR, or the nearest 'challenges' directory upward from cwd."""
+    """NOOBGPU_CHALLENGES_DIR, else the nearest 'challenges' directory upward
+    from cwd, else the copy shipped inside the installed package."""
     if env := os.environ.get("NOOBGPU_CHALLENGES_DIR"):
         return Path(env)
     for base in (Path.cwd(), *Path.cwd().parents):
         candidate = base / "challenges"
         if candidate.is_dir():
             return candidate
+    if PACKAGED_CHALLENGES.is_dir():
+        return PACKAGED_CHALLENGES
     raise NoobGpuError(
         "no challenges directory found — set NOOBGPU_CHALLENGES_DIR or run from the repo"
     )

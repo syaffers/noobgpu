@@ -67,3 +67,20 @@ def test_draft_roundtrip(client: TestClient):
 def test_submissions_empty(client: TestClient):
     assert client.get("/api/challenges/relu/submissions").json() == []
     assert client.get("/api/submissions/999").status_code == 404
+
+
+def test_unexpected_judge_crash_ends_stream_with_error_event(
+    client: TestClient, monkeypatch
+):
+    import noobgpu.api
+    from conftest import sse_events
+
+    def boom(*args, **kwargs):
+        raise RuntimeError("judge exploded")
+
+    monkeypatch.setattr(noobgpu.api, "judge_submission", boom)
+    events = sse_events(
+        client.post("/api/challenges/relu/run", json={"code": "x"}).text
+    )
+    assert events[-1]["type"] == "error"
+    assert events[-1]["error_type"] == "RuntimeError"

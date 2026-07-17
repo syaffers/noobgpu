@@ -13,5 +13,12 @@ lint:
 	cd server && uv run ruff check .
 	cd web && npm run lint
 
-build:
+build: ## Build the distributable wheel (frontend + challenges bundled)
 	cd web && npm run build
+	rm -rf server/src/noobgpu/static server/src/noobgpu/data server/dist
+	cp -r web/dist server/src/noobgpu/static
+	mkdir -p server/src/noobgpu/data
+	cp -r challenges server/src/noobgpu/data/challenges
+	rm -rf server/src/noobgpu/data/challenges/*/.cache
+	cd server && uv build --wheel
+	@ls server/dist/*.whl

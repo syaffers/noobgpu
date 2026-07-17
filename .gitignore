@@ -21,3 +21,7 @@ dist/
 
 # Challenge expected-output cache (regenerated from reference.cu)
 challenges/*/.cache/
+
+# Build artifacts copied into the package by `make build`
+server/src/noobgpu/static/
+server/src/noobgpu/data/

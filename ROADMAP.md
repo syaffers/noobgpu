@@ -177,19 +177,28 @@ shows guidance instead of a broken page. *(Verified in headless Chromium: whole 
 end-to-end; nvcc state tested against a real stripped-PATH server; no-GPU state via a
 stubbed /api/gpu response — a driverless environment can't be produced on this machine.)*
 
-### M6 — Release v0.1.0 (medium)
-Grow to **10 challenges** (add: Matrix Addition, Leaky ReLU, 1D Convolution, Color
-Inversion, Reduction/Sum). Packaging: frontend built into the Python package as static
-files; `uvx noobgpu` (or `pipx run noobgpu`) starts the server and opens the browser.
-README with a screenshot-led quickstart, CONTRIBUTING with a "write a challenge pack"
-guide, LICENSE (MIT for code; challenges CC BY 4.0 so others *can* reuse ours), CHANGELOG,
-tagged GitHub release.
+### M6 — Release v0.1.0 (medium) — ✅ done 2026-07-17
+*(Descoped 2026-07-17: ships with the five M2 challenges; the five additional ones —
+Matrix Addition, Leaky ReLU, 1D Convolution, Color Inversion, Reduction/Sum — moved to
+the post-1.0 backlog.)* Packaging: `make build` bundles the built frontend and the
+challenge packs into the wheel; the `noobgpu` command serves UI + API + judge from one
+process (SPA fallback, packaged-challenges fallback, expected-output cache redirected
+to `~/.cache/noobgpu`) and opens the browser. README with a screenshot-led quickstart,
+CONTRIBUTING with a "write a challenge pack" guide, LICENSE (MIT for code; challenges
+CC BY 4.0 so others *can* reuse ours), CHANGELOG, tagged v0.1.0.
 
 **Done when:** a stranger with an NVIDIA GPU, CUDA toolkit, and `uv` installed goes from
 zero to an Accepted submission using only the README — tested by actually doing this in a
-clean VM/machine.
+clean VM/machine. *(Approximated on this machine: wheel installed into a fresh
+`uv tool` environment, run from `$HOME` with the cache wiped — UI served, packaged
+challenges listed, submission Accepted. The install test caught and fixed two real
+bugs: missing `parents=True` on first cache creation, and SSE streams ending silently
+on unexpected judge exceptions. A true clean-VM pass still deserves a run before
+announcing the release.)*
 
 ### Post-1.0 backlog (recorded, not committed)
+Five more challenges (Matrix Addition, Leaky ReLU, 1D Convolution, Color Inversion,
+Reduction/Sum — descoped from M6),
 Triton and PyTorch runtimes (revisits the CPU-fallback question), `DockerRunner` for
 untrusted code, free-form playground page (compile/run arbitrary `.cu` with no judge —
 M1's runner already does the work), first-class `noobgpu run file.cu` CLI (promote M1's

@@ -11,7 +11,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from noobgpu.challenges import Challenge, ChallengePackError, load_challenge, load_challenges
-from noobgpu.errors import GpuNotAvailableError, NoobGpuError
+from noobgpu.errors import GpuNotAvailableError
 from noobgpu.gpu import detect_gpu
 from noobgpu.judge import judge_submission
 from noobgpu.runner import SubprocessRunner
@@ -135,7 +135,8 @@ def _sse_judge(
                     "submission_id": submission_id,
                 }
             )
-        except NoobGpuError as exc:
+        except Exception as exc:  # noqa: BLE001 — the stream must always end with
+            # a visible error event; a silent stop looks like a hang in the UI.
             events.put(
                 {"type": "error", "error_type": type(exc).__name__, "message": str(exc)}
             )

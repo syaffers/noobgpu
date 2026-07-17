@@ -117,7 +117,7 @@ def ensure_expected_outputs(
     if not missing:
         return paths
 
-    challenge.cache_dir.mkdir(exist_ok=True)
+    challenge.cache_dir.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="noobgpu-ref-") as tmp:
         binary = Path(tmp) / "reference"
         compiled = compile_cuda(

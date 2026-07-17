@@ -101,5 +101,17 @@ def test_expected_outputs_are_cached():
     assert len(cached) == len(challenge.tests)
 
 
+@pytest.mark.gpu
+def test_cache_env_redirect_creates_nested_dirs(monkeypatch, tmp_path: Path):
+    # Packaged installs point NOOBGPU_CACHE_DIR at a path that may not exist yet.
+    monkeypatch.setenv("NOOBGPU_CACHE_DIR", str(tmp_path / "deep" / "cache"))
+    challenge = load_challenge(ROOT / "relu")
+    result = judge_submission(
+        challenge, challenge.reference_path.read_text(), ROOT, runner, sample_only=True
+    )
+    assert result.verdict == Verdict.ACCEPTED
+    assert list((tmp_path / "deep" / "cache" / "relu").glob("*.bin"))
+
+
 def test_all_packs_have_wrong_solutions():
     assert {p.stem for p in WRONG.glob("*.cu")} == set(PACK_IDS)
