@@ -3,14 +3,14 @@
 ## Dev setup
 
 Requirements: Linux, an NVIDIA GPU + driver, CUDA toolkit (`nvcc`),
-[uv](https://docs.astral.sh/uv/), Node.js.
+[uv](https://docs.astral.sh/uv/), Node.js, [just](https://github.com/casey/just).
 
 ```bash
 git clone https://github.com/syaffers/noobgpu.git
 cd noobgpu
-make dev     # backend :8000 + frontend :5173, hot reload on both
-make test    # server tests; GPU-marked tests auto-skip without a GPU
-make lint
+just dev     # backend :8000 + frontend :5173, hot reload on both
+just test    # server tests; GPU-marked tests auto-skip without a GPU
+just lint
 ```
 
 Conventions: conventional commits (`feat:`, `fix:`, `docs:`, …); CI must be green;

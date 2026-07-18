@@ -27,7 +27,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/noobgpu"]
-# Built frontend + challenge packs are copied in by `make build` and
+# Built frontend + challenge packs are copied in by `just build` and
 # git-ignored; artifacts forces them into the wheel anyway.
 artifacts = ["src/noobgpu/static", "src/noobgpu/data"]
 

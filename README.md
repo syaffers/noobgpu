@@ -27,14 +27,15 @@ CUDA events.
 - Linux (Windows works via WSL2)
 - An NVIDIA GPU with a recent driver (`nvidia-smi` should work)
 - CUDA toolkit (`nvcc` on PATH)
-- [uv](https://docs.astral.sh/uv/) and [Node.js](https://nodejs.org) (to build)
+- [uv](https://docs.astral.sh/uv/), [Node.js](https://nodejs.org), and
+  [just](https://github.com/casey/just) (to build)
 
 ## Quickstart
 
 ```bash
 git clone https://github.com/syaffers/noobgpu.git
 cd noobgpu
-make build                    # builds the frontend + a wheel with everything bundled
+just build                    # builds the frontend + a wheel with everything bundled
 uv tool install ./server/dist/noobgpu-0.1.0-py3-none-any.whl
 noobgpu                       # starts the server — open the printed URL in your browser
 ```
@@ -64,9 +65,9 @@ one more reason the SSH tunnel is the right tool there.
 ## Development
 
 ```bash
-make dev     # backend :8000 + frontend :5173 with hot reload
-make test    # server test suite (GPU tests auto-skip without a GPU)
-make lint    # ruff + oxlint
+just dev     # backend :8000 + frontend :5173 with hot reload
+just test    # server test suite (GPU tests auto-skip without a GPU)
+just lint    # ruff + oxlint
 ```
 
 The repo layout: `server/` (FastAPI + judge), `web/` (React + Monaco), `challenges/`
