@@ -1,14 +1,9 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
+import DifficultyPill from '../components/DifficultyPill'
 import GpuBadge from '../components/GpuBadge'
 import StatusBanner from '../components/StatusBanner'
 import type { ChallengeSummary, GpuInfo } from '../lib/types'
-
-const DIFFICULTY_STYLE = {
-  easy: 'bg-emerald-900/60 text-emerald-300',
-  medium: 'bg-amber-900/60 text-amber-300',
-  hard: 'bg-red-900/60 text-red-300',
-} as const
 
 const FILTERS = ['all', 'easy', 'medium', 'hard'] as const
 
@@ -77,11 +72,7 @@ export default function ChallengeList({ challenges, gpu }: Props) {
                 to={`/challenges/${c.id}`}
                 className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5 transition hover:border-neutral-600 hover:bg-neutral-900"
               >
-                <span
-                  className={`mb-3 inline-block rounded-full px-3 py-0.5 text-xs font-semibold ${DIFFICULTY_STYLE[c.difficulty]}`}
-                >
-                  {c.difficulty}
-                </span>
+                <DifficultyPill difficulty={c.difficulty} />
                 <h3 className="mb-2 text-lg font-semibold">{c.title}</h3>
                 <p className="line-clamp-3 text-sm text-neutral-400">{c.blurb}</p>
               </Link>
