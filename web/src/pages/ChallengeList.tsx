@@ -6,6 +6,7 @@ import StatusBanner from '../components/StatusBanner'
 import type { ChallengeSummary, GpuInfo } from '../lib/types'
 
 const FILTERS = ['all', 'easy', 'medium', 'hard'] as const
+const DIFFICULTY_RANK = { easy: 0, medium: 1, hard: 2 } as const
 
 type Props = { challenges: ChallengeSummary[]; gpu: GpuInfo | null }
 
@@ -15,11 +16,13 @@ export default function ChallengeList({ challenges, gpu }: Props) {
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return challenges.filter(
-      (c) =>
-        (difficulty === 'all' || c.difficulty === difficulty) &&
-        (q === '' || c.title.toLowerCase().includes(q) || c.blurb.toLowerCase().includes(q)),
-    )
+    return challenges
+      .filter(
+        (c) =>
+          (difficulty === 'all' || c.difficulty === difficulty) &&
+          (q === '' || c.title.toLowerCase().includes(q) || c.blurb.toLowerCase().includes(q)),
+      )
+      .sort((a, b) => DIFFICULTY_RANK[a.difficulty] - DIFFICULTY_RANK[b.difficulty])
   }, [challenges, query, difficulty])
 
   return (
