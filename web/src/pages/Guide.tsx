@@ -16,7 +16,7 @@ export default function Guide({ gpu }: { gpu: GpuInfo | null }) {
           <GpuBadge gpu={gpu} />
         </div>
       </header>
-      <main className="mx-auto min-h-0 w-full max-w-3xl flex-1">
+      <main className="min-h-0 flex-1">
         <ProblemPanel description={guide} />
       </main>
     </div>
