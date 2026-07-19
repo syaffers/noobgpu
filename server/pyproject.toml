@@ -1,6 +1,6 @@
 [project]
 name = "noobgpu"
-version = "0.1.0"
+version = "0.1.1"
 description = "Local-first CUDA challenge playground — LeetGPU-style workspace running on your own GPU"
 readme = "README.md"
 requires-python = ">=3.12"
