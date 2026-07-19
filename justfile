@@ -6,7 +6,7 @@ dev:
     #!/usr/bin/env bash
     trap 'kill 0' EXIT
     (cd server && uv run uvicorn noobgpu.app:app --reload --port 8000) &
-    (cd web && npm run dev) &
+    (cd web && npm install && npm run dev) &
     wait
 
 test:
@@ -18,7 +18,7 @@ lint:
 
 # Build the distributable wheel (frontend + challenges bundled)
 build:
-    cd web && npm run build
+    cd web && npm install && npm run build
     rm -rf server/src/noobgpu/static server/src/noobgpu/data server/dist
     cp -r web/dist server/src/noobgpu/static
     mkdir -p server/src/noobgpu/data
