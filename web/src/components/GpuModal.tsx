@@ -1,6 +1,9 @@
 import type { GpuInfo } from '../lib/types'
 
 export default function GpuModal({ gpu, onClose }: { gpu: GpuInfo; onClose: () => void }) {
+  const hasComputed = gpu.available && gpu.specs.some((s) => s.rows.some(([l]) => l.includes('*')))
+  const hasPeak = gpu.available && gpu.specs.some((s) => s.rows.some(([l]) => l.includes('†')))
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6"
@@ -45,6 +48,13 @@ export default function GpuModal({ gpu, onClose }: { gpu: GpuInfo; onClose: () =
             <p className="text-sm text-neutral-400">{gpu.error}</p>
           )}
         </div>
+
+        {(hasComputed || hasPeak) && (
+          <div className="flex flex-wrap gap-x-4 gap-y-1 border-t border-neutral-800 px-5 py-3 text-xs text-neutral-500">
+            {hasComputed && <span>* derived from other reported specs, not read directly</span>}
+            {hasPeak && <span>† theoretical maximum, rarely sustained in practice</span>}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -136,6 +136,10 @@ def _nvml_extras(index: int = 0) -> dict[str, int]:
     return extras
 
 
+COMPUTED = "*"
+PEAK = "†"
+
+
 def _row(rows: list, label: str, value: str | None) -> None:
     if value is not None:
         rows.append([label, value])
@@ -162,7 +166,7 @@ def gpu_spec_sheet(index: int = 0) -> list[dict]:
     _row(core, "Boost Clock", f"{nv['boost_clock_mhz']:,} MHz" if "boost_clock_mhz" in nv else None)
     if "cuda_cores" in nv and "boost_clock_mhz" in nv:
         tflops = 2 * nv["cuda_cores"] * nv["boost_clock_mhz"] / 1e6
-        _row(core, "FP32 Performance", f"{tflops:.1f} TFLOPS (peak, computed)")
+        _row(core, f"FP32 Performance{COMPUTED}{PEAK}", f"{tflops:.1f} TFLOPS")
 
     def cu_row(rows: list, label: str, key: str, template: str = "{:,}", div: int = 1) -> None:
         if key in cu:
@@ -174,7 +178,7 @@ def gpu_spec_sheet(index: int = 0) -> list[dict]:
     cu_row(memory, "Memory Clock", "mem_clock_khz", "{:,} MHz", div=1000)
     if cu.get("mem_clock_khz") and cu.get("bus_width_bits"):
         gbs = cu["mem_clock_khz"] * 1000 * (cu["bus_width_bits"] / 8) * 2 / 1e9
-        _row(memory, "Peak Memory Bandwidth", f"{gbs:.0f} GB/s (computed)")
+        _row(memory, f"Peak Memory Bandwidth{COMPUTED}", f"{gbs:.0f} GB/s")
     cu_row(memory, "L2 Cache Size", "l2_bytes", "{} MB", div=1024 * 1024)
     cu_row(memory, "Shared Memory per SM", "shared_per_sm_bytes", "{} KB", div=1024)
     cu_row(memory, "Max Shared Memory per Block", "shared_per_block_optin_bytes", "{} KB", div=1024)
