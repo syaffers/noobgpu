@@ -1,4 +1,4 @@
-# NoobGPU — Roadmap to v0.1.0
+# NoobGPU — Roadmap
 
 An open-source, local-first take on [LeetGPU](https://leetgpu.com): a challenge-based
 CUDA playground that runs in your browser but executes on **your own machine**. If an
@@ -205,7 +205,42 @@ untrusted code, free-form playground page (compile/run arbitrary `.cu` with no j
 M1's runner already does the work), first-class `noobgpu run file.cu` CLI (promote M1's
 throwaway judge CLI), community challenge-pack index, local performance leaderboard
 (best kernel ms per challenge), multi-GPU selection, Windows-native runner,
-CUDA-simulator integration for GPU-less machines.
+CUDA-simulator integration for GPU-less machines, PyPI publish (`pip install noobgpu` /
+`uv add noobgpu` as an alternative to the GitHub release wheel — name confirmed
+available as of 2026-07-19; releases there are effectively permanent once published,
+so probably waits until the API has settled a bit more).
+
+## Beyond v0.1: backends and multi-user (recorded, not committed)
+
+Not scoped yet — recorded here so the direction survives across sessions. Each item
+below needs its own decisions-table-and-milestones planning pass, the way v1 got on
+2026-07-16, before work starts.
+
+**v0.2.0 target — AMD GPU support.** The next most popular discrete GPU after NVIDIA,
+and a reachable scope for a single milestone. It touches the two NVIDIA-specific seams
+in the codebase: `gpu/` detection (currently NVML via `nvidia-ml-py`) needs a
+ROCm-SMI/`amdsmi` counterpart, and the judge's compile step (currently
+`nvcc -arch=native`) needs a HIP equivalent. Open design question: does a challenge
+pack ship parallel `.cu`/`.hip` sources, or does one CUDA source get translated
+(`hipify`) at build time? Either way, the harness contract
+(`_common/noobgpu_harness.h`) needs a HIP-compatible counterpart.
+
+**Longer-term — broader backend support.** Not NVIDIA/CUDA-only, and not GPU-only:
+Vulkan compute (broadest reach — one backend covers most GPU vendors, including
+integrated graphics), Intel ARC (oneAPI/Level Zero or SYCL), and Neon for ARM CPUs
+(the odd one out — CPU, not GPU, stretches the "GPU playground" framing, but fits the
+"learn parallel programming on hardware you already own" pitch). Scoped narrowly to
+these for now — NVIDIA, AMD, Vulkan-generic, Intel ARC, Neon. Each backend needs its
+own challenge-pack content, not just a runtime port, since the non-goal on challenge
+originality (no LeetGPU derivation) applies per backend too.
+
+**Multi-user / local-network auth.** For serving one shared box to a small group
+(students, training cohorts): lightweight local accounts, per-user submission history
+and drafts, same UI and the same underlying GPU underneath. This reverses the explicit
+v1 non-goal on accounts/auth — intentional, now that the single-user flow is proven.
+The real design question isn't login, it's `Runner` concurrency: the judge currently
+runs one job at a time against one GPU. Multiple simultaneous users need a queue (and
+a "queued behind 2 others" UI state), not necessarily true concurrent GPU access.
 
 ## Open questions (fine to defer, listed for accountability)
 
@@ -223,3 +258,7 @@ CUDA-simulator integration for GPU-less machines.
    workspace's real state is one challenge, one code string, one event list, and a few
    booleans — a store would be ceremony. Revisit only if M5 routing shows real
    prop-drilling pain.
+5. **Multi-backend challenge format** — parallel per-backend sources vs. a translation
+   layer (e.g. `hipify` for AMD)? Decide when AMD support is actually scoped.
+6. **Concurrent access under multi-user** — queue submissions against the single GPU,
+   or allow real concurrent execution? Decide when auth/multi-user is actually scoped.
