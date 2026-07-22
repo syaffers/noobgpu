@@ -35,12 +35,16 @@ def detect_gpu(index: int = 0) -> GpuInfo:
         if pynvml.nvmlDeviceGetCount() == 0:
             raise GpuNotAvailableError("NVIDIA driver loaded but no GPU devices found")
         handle = pynvml.nvmlDeviceGetHandleByIndex(index)
-        major, minor = pynvml.nvmlDeviceGetCudaComputeCapability(handle)
+        cu = _cuda_attributes(index)
+        major, minor = cu.get("cc_major"), cu.get("cc_minor")
+        total_mem = _cuda_total_mem(index)
+        if total_mem is None:
+            total_mem = pynvml.nvmlDeviceGetMemoryInfo(handle).total
         return GpuInfo(
             name=_text(pynvml.nvmlDeviceGetName(handle)),
             driver_version=_text(pynvml.nvmlSystemGetDriverVersion()),
-            memory_total_mib=pynvml.nvmlDeviceGetMemoryInfo(handle).total // (1024 * 1024),
-            compute_capability=f"{major}.{minor}",
+            memory_total_mib=total_mem // (1024 * 1024),
+            compute_capability=f"{major}.{minor}" if major is not None else "unknown",
         )
     except pynvml.NVMLError as exc:
         raise GpuNotAvailableError(f"Failed to query GPU {index}: {exc}") from exc
@@ -89,6 +93,24 @@ def tensor_cores_per_sm(major: int, minor: int) -> int:
     if major < 7:
         return 0
     return 8 if major == 7 else 4
+
+
+def _cuda_total_mem(index: int = 0) -> int | None:
+    """Total device memory via libcuda; NVML's memory-info calls return
+    NOT_SUPPORTED on unified-memory systems like DGX Spark's GB10."""
+    try:
+        libcuda = ctypes.CDLL("libcuda.so.1")
+    except OSError:
+        return None
+    if libcuda.cuInit(0) != 0:
+        return None
+    device = ctypes.c_int()
+    if libcuda.cuDeviceGet(ctypes.byref(device), index) != 0:
+        return None
+    total = ctypes.c_size_t()
+    if libcuda.cuDeviceTotalMem_v2(ctypes.byref(total), device) != 0:
+        return None
+    return total.value
 
 
 def _cuda_attributes(index: int = 0) -> dict[str, int]:
@@ -169,7 +191,11 @@ def gpu_spec_sheet(index: int = 0) -> list[dict]:
         _row(core, f"FP32 Performance{COMPUTED}{PEAK}", f"{tflops:.1f} TFLOPS")
 
     def cu_row(rows: list, label: str, key: str, template: str = "{:,}", div: int = 1) -> None:
-        if key in cu:
+        # cuDeviceGetAttribute reports 0 (not an error) for memory-bus-width/clock
+        # on unified-memory GPUs like GB10 — those attributes assume a discrete
+        # GDDR/HBM controller. Treat 0 as "not applicable" for every field here,
+        # since none of them are legitimately 0 on real hardware.
+        if cu.get(key):
             rows.append([label, template.format(cu[key] // div)])
 
     memory: list = []
