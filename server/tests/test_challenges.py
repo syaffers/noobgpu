@@ -103,5 +103,6 @@ def test_repo_packs_all_load():
         "matrix-transpose",
         "relu",
         "reverse-array",
+        "scalar-multiplication",
         "vector-addition",
     }
