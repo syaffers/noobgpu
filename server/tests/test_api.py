@@ -33,7 +33,7 @@ def test_gpu_endpoint_shape(client: TestClient):
 
 def test_challenge_list(client: TestClient):
     challenges = client.get("/api/challenges").json()
-    assert len(challenges) == 5
+    assert len(challenges) == 6
     entry = next(c for c in challenges if c["id"] == "vector-addition")
     assert entry["title"] == "Vector Addition"
     assert entry["difficulty"] == "easy"

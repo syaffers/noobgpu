@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.2 — 2026-11-10
+
+- New challenge: Scalar Multiplication (easy).
+
 ## 0.1.1 — 2026-07-19
 
 - Onboarding guide page (`/guide`) with a line-by-line first-kernel walkthrough;
