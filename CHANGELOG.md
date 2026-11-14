@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.3 — 2026-11-14
+
+- New challenge: Color Inversion (easy).
+
 ## 0.1.2 — 2026-11-10
 
 - New challenge: Scalar Multiplication (easy).
