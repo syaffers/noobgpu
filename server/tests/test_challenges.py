@@ -99,6 +99,7 @@ def test_repo_packs_all_load():
     ids = [c.id for c in challenges]
     assert ids == sorted(ids)
     assert set(ids) == {
+        "color-inversion",
         "matrix-multiplication",
         "matrix-transpose",
         "relu",

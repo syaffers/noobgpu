@@ -1,0 +1,21 @@
+id = "color-inversion"
+title = "Color Inversion"
+difficulty = "easy"
+tolerance = 1e-5
+
+[[tests]]
+name = "sample-8"
+sample = true
+args = [8, 1]
+
+[[tests]]
+name = "one-pixel"
+args = [4, 2]
+
+[[tests]]
+name = "ragged-100004"
+args = [100004, 3]
+
+[[tests]]
+name = "large-1m"
+args = [1048576, 4]
